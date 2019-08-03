@@ -116,7 +116,11 @@ class Tx:
         # parse num_outputs number of TxOuts
         # locktime is an integer in 4 bytes, little-endian
         # return an instance of the class (see __init__ for args)
-        raise NotImplementedError
+        version = int.from_bytes(s.read(4), byteorder='little')
+        tx_ins = None
+        tx_outs = None
+        locktime = None
+        return Tx(version, tx_ins, tx_outs, locktime, testnet)
 
     # tag::source6[]
     def serialize(self):
