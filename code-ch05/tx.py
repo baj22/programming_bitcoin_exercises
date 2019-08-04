@@ -125,7 +125,7 @@ class Tx:
         tx_outs = []
         for i in range(num_outputs):
             tx_outs.append(TxOut.parse(s))
-        locktime = None
+        locktime = int.from_bytes(s.read(4), byteorder='little')
         return Tx(version, tx_ins, tx_outs, locktime, testnet)
 
     # tag::source6[]
