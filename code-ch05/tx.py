@@ -117,7 +117,10 @@ class Tx:
         # locktime is an integer in 4 bytes, little-endian
         # return an instance of the class (see __init__ for args)
         version = int.from_bytes(s.read(4), byteorder='little')
-        tx_ins = None
+        num_inputs = read_varint(s)
+        tx_ins = []
+        for i in range(num_inputs):
+            tx_ins.append(TxIn.parse(s))
         tx_outs = None
         locktime = None
         return Tx(version, tx_ins, tx_outs, locktime, testnet)
@@ -169,11 +172,15 @@ class TxIn:
         return a TxIn object
         '''
         # prev_tx is 32 bytes, little endian
+        prev_tx = s.read(32)[::-1]
         # prev_index is an integer in 4 bytes, little endian
+        prev_index = int.from_bytes(s.read(4), byteorder='little')
         # use Script.parse to get the ScriptSig
+        script_sig = Script.parse(s)
         # sequence is an integer in 4 bytes, little-endian
+        sequence = int.from_bytes(s.read(4), byteorder='little')
         # return an instance of the class (see __init__ for args)
-        raise NotImplementedError
+        return cls(prev_tx, prev_index, script_sig, sequence)
 
     # tag::source5[]
     def serialize(self):
