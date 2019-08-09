@@ -176,8 +176,8 @@ class Tx:
                 result += value.script_pubkey(self.testnet).serialize()
                 print(value.script_pubkey(self.testnet))
             # Otherwise, the ScriptSig is empty
-            #else:
-                #result += int_to_little_endian(0, 1) # I know this is silly, but it is also correct.
+            else:
+                result += int_to_little_endian(0, 1) # I know this is silly, but it is also correct.
             # add the serialization of the input with the ScriptSig we want
         # add how many outputs there are using encode_varint
         result += encode_varint(len(self.tx_outs))
