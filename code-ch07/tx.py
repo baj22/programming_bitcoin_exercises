@@ -165,24 +165,20 @@ class Tx:
         result = int_to_little_endian(self.version, 4)
         # add how many inputs there are using encode_varint
         result += encode_varint(len(self.tx_ins))
-        print(input_index)
-        print(len(self.tx_ins))
-        print(self.tx_ins)
         # loop through each input using enumerate, so we have the input index
         for index, value in enumerate(self.tx_ins):
             # if the input index is the one we're signing
             # the previous tx's ScriptPubkey is the ScriptSig
-            if index == input_index:
-                result += value.script_pubkey(self.testnet).serialize()
-                print(value.script_pubkey(self.testnet))
             # Otherwise, the ScriptSig is empty
-            else:
-                result += int_to_little_endian(0, 1) # I know this is silly, but it is also correct.
             # add the serialization of the input with the ScriptSig we want
+            result += TxIn(
+                prev_tx=value.prev_tx,
+                prev_index=value.prev_index,
+                sequence=value.sequence,
+                script_sig=None if index!=input_index else value.script_pubkey(self.testnet)
+            ).serialize()
         # add how many outputs there are using encode_varint
         result += encode_varint(len(self.tx_outs))
-        print(len(self.tx_outs))
-        print(self.tx_outs)
         for tx_out in self.tx_outs:
             # add the serialization of each output
             result += tx_out.serialize()
